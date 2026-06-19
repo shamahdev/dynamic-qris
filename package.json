@@ -1,0 +1,53 @@
+{
+  "name": "dynamic-qris",
+  "version": "0.1.0",
+  "description": "Zero-dependency, type-safe dynamic QRIS payload generator for TypeScript.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "CONTEXT.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:types": "tsd --files index.test-d.ts",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm test && npm run test:types"
+  },
+  "keywords": [
+    "qris",
+    "dynamic-qris",
+    "qris-generator",
+    "static-qris",
+    "dynamic-qris-generator",
+    "payment",
+    "emvco",
+    "bank-indonesia",
+    "indonesia",
+    "zero-dependency",
+    "typescript"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "tsd": "^0.31.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.5.0"
+  }
+}
