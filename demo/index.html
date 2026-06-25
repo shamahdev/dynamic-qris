@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dynamic-qris — Demo</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="hero">
+        <h1>dynamic-qris</h1>
+        <p class="tagline">
+          Zero-dependency, type-safe dynamic QRIS payload generator for TypeScript.
+          Paste a static QRIS payload, enter an amount, and get a scannable dynamic QR.
+        </p>
+        <nav class="hero-links">
+          <a href="https://github.com/shamahdev/dynamic-qris" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://www.npmjs.com/package/@shamah/dynamic-qris" target="_blank" rel="noopener">npm</a>
+        </nav>
+        <code class="install-snippet">npm install @shamah/dynamic-qris <button id="copy-install" type="button" class="btn-copy install-copy">Copy</button></code>
+      </header>
+
+      <main class="playground">
+        <section class="panel panel--input">
+          <details class="card-accordion" open>
+            <summary>Input</summary>
+            <div class="card-body">
+
+          <label>
+            QRIS Payload
+            <textarea id="payload" rows="3" placeholder="Paste your static QRIS payload here…"></textarea>
+          </label>
+          <div class="scan-row">
+            <input id="file-input" type="file" accept="image/*" hidden />
+            <button id="btn-upload" type="button" class="btn-scan" title="Upload QR image">📁 Upload QR</button>
+            <button id="btn-example" type="button" class="btn-scan">Use example</button>
+            <span id="scan-status" class="scan-status"></span>
+          </div>
+
+          <p class="payload-disclaimer">
+            The example QRIS payload below is a real charity/donation QR for <strong>TemenBaik.com</strong>.
+            I am not affiliated with TemenBaik.com. Paying this QR will deduct real money from your account, and I am not responsible for it.
+            Replace it with your own static QRIS payload before generating.
+          </p>
+
+          <div class="row">
+            <label>
+              Amount (Rp)
+              <input id="amount" type="number" min="10000" max="10000000" placeholder="25000" />
+            </label>
+            <label>
+              Mode
+              <select id="mode">
+                <option value="strict">strict</option>
+                <option value="replace">replace</option>
+              </select>
+            </label>
+          </div>
+
+          <fieldset class="fee-group">
+            <legend>Customer Fee</legend>
+            <label>
+              Type
+              <select id="fee-type">
+                <option value="none">none</option>
+                <option value="fixed">fixed</option>
+                <option value="percentage">percentage</option>
+              </select>
+            </label>
+            <label>
+              Value
+              <input id="fee-value" type="number" min="0" placeholder="500" />
+            </label>
+            <label id="fee-rounding-label" hidden>
+              Rounding
+              <select id="fee-rounding">
+                <option value="ceil">ceil</option>
+                <option value="floor">floor</option>
+                <option value="round">round</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Additional Data (Tag 62)</legend>
+            <div class="row">
+              <label>
+                Reference Label
+                <input id="ref-label" type="text" placeholder="INV-001" />
+              </label>
+              <label>
+                Terminal Label
+                <input id="terminal-label" type="text" placeholder="POS-01" />
+              </label>
+            </div>
+          </fieldset>
+
+          <button id="generate" type="button">Generate Dynamic QRIS</button>
+            </div>
+          </details>
+        </section>
+
+      <div class="right-col">
+        <section class="panel panel--code">
+          <details class="card-accordion card-accordion--dark">
+            <summary>Code</summary>
+            <div class="card-body">
+              <button id="copy-code" type="button" class="btn-copy-code" title="Copy code">Copy</button>
+              <pre><code id="code-snippet"></code></pre>
+            </div>
+          </details>
+        </section>
+
+        <section class="panel panel--output">
+          <details class="card-accordion" open>
+            <summary>Output</summary>
+            <div class="card-body">
+
+          <div id="error" class="error-box" hidden></div>
+
+          <p id="output-placeholder" class="output-placeholder">Generate to see output</p>
+
+          <div id="result" hidden>
+            <div class="qr-compare">
+              <div class="qr-wrap">
+                <p class="qr-label">Static QR (Input)</p>
+                <div class="qr-frame">
+                  <canvas id="qr-input-canvas"></canvas>
+                  <img src="/src/qris.png" alt="QRIS" class="qr-frame-img" />
+                </div>
+              </div>
+              <div class="qr-wrap">
+                <p class="qr-label">Dynamic QR (Output)</p>
+                <div class="qr-frame">
+                  <canvas id="qr-canvas"></canvas>
+                  <img src="/src/qris.png" alt="QRIS" class="qr-frame-img" />
+                </div>
+              </div>
+            </div>
+            <p class="qr-note">Compare the QR images. The static (left) has no amount; the dynamic (right) includes the payable amount and updated CRC.</p>
+
+            <div class="amounts">
+              <div class="amount-card">
+                <span class="amount-label">Base Amount</span>
+                <span id="out-base" class="amount-value">Rp0</span>
+              </div>
+              <div class="amount-card">
+                <span class="amount-label">Fee Amount</span>
+                <span id="out-fee" class="amount-value">Rp0</span>
+              </div>
+              <div class="amount-card amount-card--total">
+                <span class="amount-label">Payable Amount</span>
+                <span id="out-payable" class="amount-value">Rp0</span>
+              </div>
+            </div>
+
+            <div class="payload-section">
+              <div class="payload-header">
+                <h3>Dynamic QRIS Payload</h3>
+                <button id="copy" type="button" class="btn-copy">Copy</button>
+              </div>
+              <pre id="out-payload" class="payload-text"></pre>
+            </div>
+
+            <details class="metadata-section">
+              <summary>Metadata</summary>
+              <pre id="out-metadata" class="metadata-text"></pre>
+            </details>
+          </div>
+            </div>
+          </details>
+        </section>
+      </div>
+      </main>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
