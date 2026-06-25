@@ -4,13 +4,17 @@
 
 **Zero-dependency, ~3.7 kB gzip, type-safe dynamic QRIS generator for TypeScript.**
 
-[Install](#install) • [Quick Start](#quick-start) • [Features](#features) • [API](#api) • [Comparison](#comparison)
+[Install](#install) • [Quick Start](#quick-start) • [Demo](#demo) • [Features](#features) • [API](#api) • [Comparison](#comparison)
 
 </div>
 
 `dynamic-qris` converts static QRIS payload strings into dynamic QRIS payloads with a transaction amount, optional customer fee, optional reference labels, and a fresh CRC16 checksum. It focuses on the core payload transformation only: no QR image rendering, no gateway API calls, no CLI, and no runtime dependencies.
 
 QRIS is Indonesia's national QR payment standard from Bank Indonesia. See the official Bank Indonesia QRIS page for the current definition and rules: https://www.bi.go.id/id/fungsi-utama/sistem-pembayaran/ritel/kanal-layanan/qris/default.aspx
+
+## Demo
+
+Try it live: **[dynamic-qris-demo.vercel.app](https://dynamic-qris-demo.vercel.app/)**
 
 ## Features
 
