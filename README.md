@@ -1,7 +1,5 @@
 <div align="center">
 
-<div style="font-size: 64px; line-height: 1;">⛶</div>
-
 # dynamic-qris
 
 **Zero-dependency, ~3.7 kB gzip, type-safe dynamic QRIS generator for TypeScript.**
@@ -24,23 +22,23 @@ QRIS is Indonesia's national QR payment standard from Bank Indonesia. See the of
 ## Install
 
 ```bash
-npm install dynamic-qris
+npm install @shamah/dynamic-qris
 ```
 
 Works with Node.js `>=18` and both ESM and CommonJS consumers.
 
 ```ts
-import { generateDynamicQris } from "dynamic-qris";
+import { generateDynamicQris } from "@shamah/dynamic-qris";
 ```
 
 ```js
-const { generateDynamicQris } = require("dynamic-qris");
+const { generateDynamicQris } = require("@shamah/dynamic-qris");
 ```
 
 ## Quick Start
 
 ```ts
-import { generateDynamicQris } from "dynamic-qris";
+import { generateDynamicQris } from "@shamah/dynamic-qris";
 
 // Merchant static QRIS payload.
 const staticPayload =
@@ -198,16 +196,16 @@ type Metadata = {
 
 ## Comparison
 
-`dynamic-qris` intentionally stays focused on safe local payload generation. It is not a payment gateway SDK and does not try to own QR rendering.
+`@shamah/dynamic-qris` intentionally stays focused on safe local payload generation. It is not a payment gateway SDK and does not try to own QR rendering.
 
 | Package | Best fit | Runtime deps | Type-safe API | Payload only | QR image output | Gateway APIs |
 | --- | --- | ---: | --- | --- | --- | --- |
-| [`dynamic-qris`](https://www.npmjs.com/package/dynamic-qris) | Small typed core for apps that already have a QR renderer or payment flow. | 🎉 `0` | ✅ Yes | ✅ Yes | ❌ No | ❌ No |
+| [`@shamah/dynamic-qris`](https://www.npmjs.com/package/@shamah/dynamic-qris) | Small typed core for apps that already have a QR renderer or payment flow. | 🎉 `0` | ✅ Yes | ✅ Yes | ❌ No | ❌ No |
 | [`@agungjsp/qris-dinamis`](https://github.com/agungjsp/Dynamic-QRIS) | Generate QRIS strings and QR image files/base64 with template support. | `2` | ⚠️ Limited | ❌ No | ✅ Yes | ❌ No |
 | [`@fhylabs/qris-dynamic`](https://github.com/FhyLabs/qris-dynamic) | Simple dynamic QRIS string/base64 generation across CJS, ESM, and browser builds. | `4` | ✅ Yes | ❌ No | ✅ Yes | ❌ No |
 | [`qris-saurus`](https://github.com/creasico/qris-saurus) | Broad SDK with TLV utilities, provider detection, rendering, CLI, and gateway adapters. | `1` | ✅ Yes | ❌ No | ✅ Yes | ✅ Yes |
 
-Choose `dynamic-qris` when you want a tiny, auditable, type-safe QRIS payload generator that composes with the rest of your stack.
+Choose `@shamah/dynamic-qris` when you want a tiny, auditable, type-safe QRIS payload generator that composes with the rest of your stack.
 
 ## Development
 

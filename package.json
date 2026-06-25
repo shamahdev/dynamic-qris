@@ -29,10 +29,13 @@
     "test": "vitest run",
     "test:types": "tsd --files index.test-d.ts",
     "lint": "tsc --noEmit",
+    "demo:dev": "cd demo && vite",
+    "demo:build": "cd demo && tsc && vite build",
     "prepublishOnly": "npm run build && npm test && npm run test:types"
   },
   "keywords": [
     "qris",
+    "@shamah/dynamic-qris",
     "dynamic-qris",
     "qris-generator",
     "static-qris",
