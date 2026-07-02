@@ -2,6 +2,10 @@
   "name": "@shamah/dynamic-qris",
   "version": "0.1.2",
   "description": "Zero-dependency, type-safe dynamic QRIS payload generator for TypeScript.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shamahdev/dynamic-qris.git"
+  },
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
