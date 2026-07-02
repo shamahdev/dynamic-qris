@@ -6,7 +6,7 @@ import {
 } from "./amount.js";
 import { crc16 } from "./crc.js";
 import { QrisGenerationError } from "./errors.js";
-import { buildPayload, parsePayload, type Tlv } from "./payload.js";
+import { buildPayload, parseTlvs, type Tlv } from "./payload.js";
 import type { GenerateOptions, GenerateResult, Metadata } from "./types.js";
 import {
 	findExistingAmountTag,
@@ -40,7 +40,7 @@ export function generateDynamicQris(
 
 	let root: Tlv[];
 	try {
-		({ root } = parsePayload(payload));
+		root = parseTlvs(payload);
 	} catch (cause) {
 		throw new QrisGenerationError({
 			code: "INVALID_PAYLOAD",

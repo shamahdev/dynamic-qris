@@ -2,7 +2,7 @@
 
 # dynamic-qris
 
-**Zero-dependency, ~3.7 kB gzip, type-safe dynamic QRIS generator for TypeScript.**
+**Zero-dependency, ~2.5 kB gzip, type-safe dynamic QRIS generator for TypeScript.**
 
 [Install](#install) • [Quick Start](#quick-start) • [Demo](#demo) • [Features](#features) • [API](#api) • [Comparison](#comparison)
 

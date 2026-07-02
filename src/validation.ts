@@ -2,10 +2,9 @@ import { crc16 } from "./crc.js";
 import type { QrisError } from "./errors.js";
 import { makeError } from "./errors.js";
 import {
-	findSubTag,
+	buildPayload,
 	findTag,
-	parsePayload,
-	parseSubTlvs,
+	parseTlvs,
 	type Tlv,
 } from "./payload.js";
 import type {
@@ -68,7 +67,7 @@ export function validateQrisPayload(payload: string): ValidationResult {
 
 	let root: Tlv[];
 	try {
-		({ root } = parsePayload(payload));
+		root = parseTlvs(payload);
 	} catch (cause) {
 		return {
 			valid: false,
@@ -98,7 +97,7 @@ export function validateQrisPayload(payload: string): ValidationResult {
 
 export function extractMetadata(payload: string): Metadata {
 	try {
-		const { root } = parsePayload(payload);
+		const root = parseTlvs(payload);
 		return extractMetadataFromRoot(root);
 	} catch {
 		return {};
@@ -119,10 +118,10 @@ function extractMetadataFromRoot(root: Tlv[]): Metadata {
 		const sub = tryParseSubTlvs(merchantAccountTag.value);
 		if (sub) {
 			const account: MerchantAccountMetadata = {};
-			const guid = findSubTag(sub, "00");
-			const pan = findSubTag(sub, "01");
-			const id = findSubTag(sub, "02");
-			const criteria = findSubTag(sub, "03");
+			const guid = findTag(sub, "00");
+			const pan = findTag(sub, "01");
+			const id = findTag(sub, "02");
+			const criteria = findTag(sub, "03");
 			if (guid) account.globallyUniqueIdentifier = guid.value;
 			if (pan) account.merchantPan = pan.value;
 			if (id) account.merchantId = id.value;
@@ -136,9 +135,9 @@ function extractMetadataFromRoot(root: Tlv[]): Metadata {
 		const sub = tryParseSubTlvs(additionalMerchantTag.value);
 		if (sub) {
 			const merchant: AdditionalMerchantMetadata = {};
-			const guid = findSubTag(sub, "00");
-			const pan = findSubTag(sub, "02");
-			const criteria = findSubTag(sub, "03");
+			const guid = findTag(sub, "00");
+			const pan = findTag(sub, "02");
+			const criteria = findTag(sub, "03");
 			if (guid) merchant.globallyUniqueIdentifier = guid.value;
 			if (pan) merchant.merchantPan = pan.value;
 			if (criteria) merchant.merchantCriteria = criteria.value;
@@ -170,15 +169,15 @@ function extractMetadataFromRoot(root: Tlv[]): Metadata {
 		const sub = tryParseSubTlvs(additionalDataTag.value);
 		if (sub) {
 			const data: AdditionalDataMetadata = {};
-			const billNumber = findSubTag(sub, "01");
-			const mobileNumber = findSubTag(sub, "02");
-			const storeLabel = findSubTag(sub, "03");
-			const loyaltyNumber = findSubTag(sub, "04");
-			const referenceLabel = findSubTag(sub, "05");
-			const customerLabel = findSubTag(sub, "06");
-			const terminalLabel = findSubTag(sub, "07");
-			const purposeOfTransaction = findSubTag(sub, "08");
-			const additionalConsumerData = findSubTag(sub, "09");
+			const billNumber = findTag(sub, "01");
+			const mobileNumber = findTag(sub, "02");
+			const storeLabel = findTag(sub, "03");
+			const loyaltyNumber = findTag(sub, "04");
+			const referenceLabel = findTag(sub, "05");
+			const customerLabel = findTag(sub, "06");
+			const terminalLabel = findTag(sub, "07");
+			const purposeOfTransaction = findTag(sub, "08");
+			const additionalConsumerData = findTag(sub, "09");
 			if (billNumber) data.billNumber = billNumber.value;
 			if (mobileNumber) data.mobileNumber = mobileNumber.value;
 			if (storeLabel) data.storeLabel = storeLabel.value;
@@ -200,7 +199,7 @@ function extractMetadataFromRoot(root: Tlv[]): Metadata {
 function tryParseSubTlvs(value: string): Tlv[] | undefined {
 	if (value.length === 0) return [];
 	try {
-		return parseSubTlvs(value);
+		return parseTlvs(value);
 	} catch {
 		return undefined;
 	}
@@ -267,7 +266,7 @@ function rebuildRootWithAdditionalData(
 
 	const additionalDataTag: Tlv = {
 		id: ADDITIONAL_DATA_TAG,
-		value: buildSubPayload(nextSubtags),
+		value: buildPayload(nextSubtags),
 	};
 	const postalCodeIndex = nextRoot.findIndex((node) => node.id === "61");
 	const insertIndex =
@@ -313,15 +312,6 @@ function validateAdditionalDataValue(
 		);
 	}
 	return null;
-}
-
-function buildSubPayload(subtags: Tlv[]): string {
-	return subtags
-		.map((node) => {
-			const length = node.value.length.toString().padStart(2, "0");
-			return `${node.id}${length}${node.value}`;
-		})
-		.join("");
 }
 
 export function payloadValidationError(payload: string): QrisError | null {
